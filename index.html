@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>姓名判断 - 良運命名</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="background-pattern"></div>
+    <div class="container">
+        <header>
+            <h1>姓名判断 画数レコメンダー</h1>
+            <p class="subtitle">あなたの名字に最適な画数を導き出します</p>
+        </header>
+
+        <main>
+            <section class="input-section card">
+                <h2>名字を入力</h2>
+                <div class="input-group">
+                    <input type="text" id="surname-input" placeholder="例：佐藤" maxlength="2">
+                    <button id="analyze-btn">画数判定 & 運勢検索</button>
+                </div>
+                <div id="manual-adjustment" class="hidden">
+                    <p class="instruction">画数が正しくない場合は修正してください</p>
+                    <div id="stroke-inputs"></div>
+                    <button id="recalc-btn" class="secondary-btn">再計算</button>
+                </div>
+            </section>
+
+            <section id="results-section" class="results-section hidden">
+                <h2>おすすめの名前画数</h2>
+                <div id="loading" class="hidden">判定中...</div>
+                <div id="results-list" class="results-grid"></div>
+            </section>
+        </main>
+
+        <div id="kanji-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <div id="modal-content"></div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="credits">
+                <p>出典: 漢字データは「<a href="http://www.edrdg.org/wiki/index.php/KANJIDIC_Project"
+                        target="_blank">KANJIDIC2</a>」を使用しています。</p>
+                <p>著作権: <a href="http://www.edrdg.org/" target="_blank">Electronic Dictionary Research and Development
+                        Group (EDRDG)</a></p>
+                <small>&copy; 2026 Name Judgment AI</small>
+            </div>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
