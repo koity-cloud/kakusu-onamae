@@ -58,6 +58,27 @@
             </div>
         </footer>
     </div>
+    <!-- Name List Modal -->
+    <div id="name-list-modal" class="modal hidden">
+        <div class="modal-content name-list-content">
+            <span class="close-modal close-name-list">&times;</span>
+            <div id="name-list-header">
+                <h2>名前リスト</h2>
+                <p id="name-list-description"></p>
+                <div class="filter-group">
+                    <label><input type="radio" name="gender-filter" value="all" checked> すべて</label>
+                    <label><input type="radio" name="gender-filter" value="m"> 男の子</label>
+                    <label><input type="radio" name="gender-filter" value="f"> 女の子</label>
+                </div>
+            </div>
+            <div id="name-list-loading" class="hidden">
+                <div class="spinner"></div>
+                <p>データを読み込んでいます...<br>（初回のみ数秒かかります）</p>
+            </div>
+            <div id="name-list-container"></div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 

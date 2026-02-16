@@ -31,38 +31,424 @@ const loading = document.getElementById('loading');
 const kanjiModal = document.getElementById('kanji-modal');
 const modalContent = document.getElementById('modal-content');
 const closeModal = document.querySelector('.close-modal');
+const nameListModal = document.getElementById('name-list-modal');
+const nameListContainer = document.getElementById('name-list-container');
+const nameListDesc = document.getElementById('name-list-description');
 
 // State
 let currentSurnameStrokes = [];
 // Hardcoded Kanji Data (Common Joyo Kanji with readings) to ensure availability
 const KANJI_DATA = {
-    1: [{ k: '一', r: 'イチ' }, { k: '乙', r: 'オツ' }],
-    2: [{ k: '二', r: 'ニ' }, { k: '七', r: 'シチ' }, { k: '八', r: 'ハチ' }, { k: '九', r: 'キュウ' }, { k: '十', r: 'ジュウ' }, { k: '人', r: 'ジン' }, { k: '入', r: 'ニュウ' }, { k: '力', r: 'リョク' }],
-    3: [{ k: '三', r: 'サン' }, { k: '川', r: 'セン' }, { k: '工', r: 'コウ' }, { k: '土', r: 'ド' }, { k: '大', r: 'ダイ' }, { k: '女', r: 'ジョ' }, { k: '山', r: 'サン' }, { k: '子', r: 'シ' }, { k: '小', r: 'ショウ' }, { k: '口', r: 'コウ' }],
-    4: [{ k: '四', r: 'ヨン' }, { k: '五', r: 'ゴ' }, { k: '六', r: 'ロク' }, { k: '円', r: 'エン' }, { k: '天', r: 'テン' }, { k: '手', r: 'シュ' }, { k: '文', r: 'ブン' }, { k: '日', r: 'ニチ' }, { k: '月', r: 'ゲツ' }, { k: '木', r: 'モク' }, { k: '水', r: 'スイ' }, { k: '火', r: 'カ' }, { k: '犬', r: 'ケン' }, { k: '王', r: 'オウ' }, { k: '中', r: 'チュウ' }],
-    5: [{ k: '正', r: 'セイ' }, { k: '生', r: 'セイ' }, { k: '田', r: 'デン' }, { k: '白', r: 'ハク' }, { k: '目', r: 'モク' }, { k: '石', r: 'セキ' }, { k: '立', r: 'リツ' }, { k: '本', r: 'ホン' }, { k: '台', r: 'ダイ' }, { k: '平', r: 'ヘイ' }, { k: '加', r: 'カ' }, { k: '兄', r: 'キョウ' }, { k: '史', r: 'シ' }, { k: '央', r: 'オウ' }, { k: '未', r: 'ミ' }, { k: '世', r: 'セイ' }, { k: '由', r: 'ユ' }],
-    6: [{ k: '気', r: 'キ' }, { k: '休', r: 'キュウ' }, { k: '先', r: 'セン' }, { k: '早', r: 'ソウ' }, { k: '百', r: 'ヒャク' }, { k: '光', r: 'コウ' }, { k: '多', r: 'タ' }, { k: '羽', r: 'ウ' }, { k: '会', r: 'カイ' }, { k: '同', r: 'ドウ' }, { k: '回', r: 'カイ' }, { k: '次', r: 'ジ' }, { k: '吉', r: 'キチ' }, { k: '有', r: 'ユウ' }, { k: '好', r: 'コウ' }, { k: '安', r: 'アン' }, { k: '帆', r: 'ハン' }],
-    7: [{ k: '花', r: 'カ' }, { k: '村', r: 'ソン' }, { k: '男', r: 'ダン' }, { k: '見', r: 'ケン' }, { k: '赤', r: 'セキ' }, { k: '足', r: 'ソク' }, { k: '車', r: 'シャ' }, { k: '社', r: 'シャ' }, { k: '町', r: 'チョウ' }, { k: '雨', r: 'ウ' }, { k: '学', r: 'ガク' }, { k: '希', r: 'キ' }, { k: '良', r: 'リョウ' }, { k: '李', r: 'リ' }, { k: '杏', r: 'アン' }, { k: '里', r: 'リ' }],
-    8: [{ k: '金', r: 'キン' }, { k: '空', r: 'クウ' }, { k: '青', r: 'セイ' }, { k: '林', r: 'リン' }, { k: '明', r: 'メイ' }, { k: '京', r: 'キョウ' }, { k: '東', r: 'トウ' }, { k: '果', r: 'カ' }, { k: '奈', r: 'ナ' }, { k: '知', r: 'チ' }, { k: '武', r: 'ブ' }, { k: '虎', r: 'トラ' }, { k: '幸', r: 'コウ' }, { k: '和', r: 'ワ' }, { k: '季', r: 'キ' }, { k: '実', r: 'ジツ' }],
-    9: [{ k: '音', r: 'オン' }, { k: '草', r: 'ソウ' }, { k: '茶', r: 'チャ' }, { k: '星', r: 'セイ' }, { k: '春', r: 'シュン' }, { k: '風', r: 'フウ' }, { k: '食', r: 'ショク' }, { k: '前', r: 'ゼン' }, { k: '美', r: 'ビ' }, { k: '香', r: 'コウ' }, { k: '南', r: 'ナン' }, { k: '海', r: 'カイ' }, { k: '洋', r: 'ヨウ' }, { k: '奏', r: 'ソウ' }, { k: '玲', r: 'レイ' }, { k: '紀', r: 'キ' }],
-    10: [{ k: '夏', r: 'カ' }, { k: '家', r: 'カ' }, { k: '校', r: 'コウ' }, { k: '通', r: 'ツウ' }, { k: '高', r: 'コウ' }, { k: '真', r: 'シン' }, { k: '純', r: 'ジュン' }, { k: '桜', r: 'サクラ' }, { k: '紗', r: 'サ' }, { k: '莉', r: 'リ' }, { k: '修', r: 'シュウ' }, { k: '健', r: 'ケン' }, { k: '剛', r: 'ゴウ' }, { k: '書', r: 'ショ' }, { k: '馬', r: 'バ' }],
-    11: [{ k: '雪', r: 'セツ' }, { k: '船', r: 'セン' }, { k: '魚', r: 'ギョ' }, { k: '鳥', r: 'チョウ' }, { k: '黄', r: 'コウ' }, { k: '黒', r: 'コク' }, { k: '彩', r: 'サイ' }, { k: '理', r: 'リ' }, { k: '菜', r: 'ナ' }, { k: '萌', r: 'モエ' }, { k: '唯', r: 'ユイ' }, { k: '麻', r: 'マ' }, { k: '淳', r: 'ジュン' }, { k: '悠', r: 'ユウ' }, { k: '健', r: 'ケン' }],
-    12: [{ k: '晴', r: 'セイ' }, { k: '雲', r: 'ウン' }, { k: '絵', r: 'カイ' }, { k: '間', r: 'カン' }, { k: '場', r: 'ジョウ' }, { k: '朝', r: 'チョウ' }, { k: '結', r: 'ユイ' }, { k: '陽', r: 'ヨウ' }, { k: '葉', r: 'ヨウ' }, { k: '葵', r: 'アオイ' }, { k: '智', r: 'チ' }, { k: '達', r: 'タツ' }, { k: '翔', r: 'ショウ' }, { k: '遥', r: 'ハルカ' }, { k: '順', r: 'ジュン' }],
-    13: [{ k: '園', r: 'エン' }, { k: '遠', r: 'エン' }, { k: '話', r: 'ワ' }, { k: '新', r: 'シン' }, { k: '数', r: 'スウ' }, { k: '電', r: 'デン' }, { k: '愛', r: 'アイ' }, { k: '蓮', r: 'レン' }, { k: '夢', r: 'ユメ' }, { k: '楓', r: 'カエデ' }, { k: '詩', r: 'シ' }, { k: '想', r: 'ソウ' }, { k: '聖', r: 'セイ' }, { k: '寛', r: 'カン' }, { k: '誠', r: 'セイ' }],
-    14: [{ k: '聞', r: 'ブン' }, { k: '語', r: 'ゴ' }, { k: '読', r: 'ドク' }, { k: '様', r: 'ヨウ' }, { k: '緑', r: 'リョク' }, { k: '歌', r: 'カ' }, { k: '碧', r: 'アオ' }, { k: '綾', r: 'アヤ' }, { k: '輔', r: 'スケ' }, { k: '颯', r: 'ハヤテ' }, { k: '瑠', r: 'ル' }, { k: '寧', r: 'ネイ' }, { k: '鳳', r: 'ホウ' }, { k: '熊', r: 'クマ' }, { k: '聡', r: 'ソウ' }],
-    15: [{ k: '線', r: 'セン' }, { k: '横', r: 'オウ' }, { k: '熱', r: 'ネツ' }, { k: '調', r: 'チョウ' }, { k: '輝', r: 'キ' }, { k: '舞', r: 'マイ' }, { k: '凜', r: 'リン' }, { k: '潤', r: 'ジュン' }, { k: '慶', r: 'ケイ' }, { k: '穂', r: 'ホ' }, { k: '諒', r: 'リョウ' }, { k: '論', r: 'ロン' }, { k: '賞', r: 'ショウ' }, { k: '輪', r: 'リン' }, { k: '徹', r: 'テツ' }],
-    16: [{ k: '親', r: 'シン' }, { k: '頭', r: 'トウ' }, { k: '薬', r: 'ヤク' }, { k: '館', r: 'カン' }, { k: '樹', r: 'ジュ' }, { k: '澪', r: 'ミオ' }, { k: '龍', r: 'リュウ' }, { k: '興', r: 'コウ' }, { k: '優', r: 'ユウ' }, { k: '橘', r: 'タチバナ' }, { k: '頼', r: 'ライ' }, { k: '賢', r: 'ケン' }, { k: '錦', r: 'ニシキ' }, { k: '篤', r: 'トク' }, { k: '憲', r: 'ケン' }],
-    17: [{ k: '曜', r: 'ヨウ' }, { k: '顔', r: 'ガン' }, { k: '点', r: 'テン' }, { k: '優', r: 'ユウ' }, { k: '駿', r: 'シュン' }, { k: '瞳', r: 'ヒトミ' }, { k: '翼', r: 'ツバサ' }, { k: '遥', r: 'ハルカ' }, { k: '陽', r: 'ヨウ' }, { k: '燦', r: 'サン' }, { k: '嶺', r: 'レイ' }, { k: '謙', r: 'ケン' }, { k: '鞠', r: 'マリ' }, { k: '環', r: 'カン' }],
-    18: [{ k: '観', r: 'カン' }, { k: '題', r: 'ダイ' }, { k: '類', r: 'ルイ' }, { k: '験', r: 'ケン' }, { k: '織', r: 'シキ' }, { k: '藤', r: 'トウ' }, { k: '癒', r: 'ユ' }, { k: '臨', r: 'リン' }, { k: '藍', r: 'ラン' }, { k: '瞬', r: 'シュン' }, { k: '顕', r: 'ケン' }, { k: '鎮', r: 'チン' }, { k: '鎌', r: 'カマ' }, { k: '鯉', r: 'コイ' }, { k: '雛', r: 'ヒナ' }],
-    19: [{ k: '警', r: 'ケイ' }, { k: '識', r: 'シキ' }, { k: '響', r: 'キョウ' }, { k: '麗', r: 'レイ' }, { k: '羅', r: 'ラ' }, { k: '瀬', r: 'セ' }, { k: '願', r: 'ガン' }, { k: '鏡', r: 'キョウ' }, { k: '韻', r: 'イン' }, { k: '霧', r: 'キリ' }, { k: '鵬', r: 'ホウ' }, { k: '鯨', r: 'クジラ' }, { k: '譜', r: 'フ' }, { k: '藻', r: 'ソウ' }],
-    20: [{ k: '議', r: 'ギ' }, { k: '競', r: 'キョウ' }, { k: '護', r: 'ゴ' }, { k: '譲', r: 'ジョウ' }, { k: '馨', r: 'ケイ' }, { k: '耀', r: 'ヨウ' }, { k: '蘭', r: 'ラン' }, { k: '響', r: 'キョウ' }, { k: '鐘', r: 'カネ' }, { k: '懸', r: 'ケン' }, { k: '騰', r: 'トウ' }, { k: '籍', r: 'セキ' }, { k: '醸', r: 'ジョウ' }, { k: '露', r: 'ロ' }, { k: '巌', r: 'ガン' }],
-    21: [{ k: '警', r: 'ケイ' }, { k: '魔', r: 'マ' }, { k: '鶴', r: 'ツル' }, { k: '櫻', r: 'サクラ' }, { k: '露', r: 'ロ' }, { k: '顧', r: 'コ' }, { k: '艦', r: 'カン' }, { k: '躍', r: 'ヤク' }, { k: '饒', r: 'ジョウ' }, { k: '轟', r: 'ゴウ' }, { k: '辯', r: 'ベン' }, { k: '瓏', r: 'ロウ' }, { k: '籐', r: 'トウ' }, { k: '欅', r: 'ケヤキ' }, { k: '誉', r: 'ホマレ' }],
-    22: [{ k: '驚', r: 'キョウ' }, { k: '襲', r: 'シュウ' }, { k: '鑑', r: 'カン' }, { k: '籠', r: 'カゴ' }, { k: '讀', r: 'ドク' }, { k: '鑄', r: 'イ' }, { k: '權', r: 'ケン' }, { k: '歡', r: 'カン' }, { k: '聽', r: 'チョウ' }, { k: '贖', r: 'ショク' }, { k: '鷗', r: 'オウ' }, { k: '疊', r: 'ジョウ' }, { k: '聾', r: 'ロウ' }, { k: '龔', r: 'キョウ' }, { k: '顫', r: 'セン' }],
-    23: [{ k: '恋', r: 'レン' }, { k: '変', r: 'ヘン' }, { k: '蘭', r: 'ラン' }, { k: '鷲', r: 'ワシ' }, { k: '麟', r: 'リン' }, { k: '顕', r: 'ケン' }, { k: '驗', r: 'ケン' }, { k: '體', r: 'タイ' }, { k: '驛', r: 'エキ' }, { k: '罐', r: 'カン' }, { k: '顯', r: 'ケン' }, { k: '巖', r: 'ガン' }, { k: '戀', r: 'レン' }, { k: '纓', r: 'エイ' }, { k: '鑛', r: 'コウ' }],
-    24: [{ k: '鷹', r: 'タカ' }, { k: '鷺', r: 'サギ' }, { k: '麟', r: 'リン' }, { k: '琴', r: 'キン' }, { k: '讓', r: 'ジョウ' }, { k: '釀', r: 'ジョウ' }, { k: '靈', r: 'レイ' }, { k: '鹽', r: 'エン' }, { k: '囑', r: 'ショク' }, { k: '廳', r: 'チョウ' }, { k: '灣', r: 'ワン' }, { k: '籬', r: 'リ' }, { k: '齷', r: 'アク' }, { k: '矗', r: 'チク' }, { k: '蠶', r: 'サン' }]
-}; // Simplified list. In production, this should be fetched from a comprehensive database.
+    1: [
+        { k: '一', r: 'イチ', n: 'かず・はじめ', m: 'ひとつ。はじめ。' },
+        { k: '乙', r: 'オツ', n: 'おと・きのト', m: 'きのと。二番目。' }
+    ],
+    2: [
+        { k: '乃', r: 'ナイ', n: 'の', m: 'すなわち。なんじ。' },
+        { k: '力', r: 'リョク', n: 'ちから・つとむ', m: 'ちから。働き。' },
+        { k: '七', r: 'シチ', n: 'なな・かず', m: 'ななつ。' },
+        { k: '九', r: 'キュウ', n: 'ひさ・かず', m: 'ここのつ。' },
+        { k: '十', r: 'ジュウ', n: 'とお・かず・しげる', m: 'とお。完全。' },
+        { k: '人', r: 'ジン', n: 'ひと・と', m: 'ひと。人間。' },
+        { k: '二', r: 'ニ', n: 'ふた・つぐ', m: 'ふたつ。' }
+    ],
+    3: [
+        { k: '三', r: 'サン', n: 'み・みつ・かず', m: 'みっつ。' },
+        { k: '千', r: 'セン', n: 'ち・かず・ゆき', m: '数が多い。' },
+        { k: '大', r: 'ダイ', n: 'ひろ・まさ・もと', m: 'おおきい。' },
+        { k: '子', r: 'シ', n: 'こ・ね', m: 'こども。' },
+        { k: '小', r: 'ショウ', n: 'お・さ', m: 'ちいさい。' },
+        { k: '山', r: 'サン', n: 'やま・たか', m: 'やま。' },
+        { k: '川', r: 'セン', n: 'かわ', m: 'かわ。' },
+        { k: '万', r: 'マン', n: 'かず・ま・よろず', m: 'よろず。数が多い。' },
+        { k: '丈', r: 'ジョウ', n: 'たけ・とも・ひろ', m: 'たけ。長さ。' },
+        { k: '久', r: 'キュウ', n: 'ひさ・ひさし', m: 'ひさしい。時間が長い。' }
+    ],
+    4: [
+        { k: '允', r: 'イン', n: 'まこと・みつ・よし', m: 'まこと。ゆるす。' },
+        { k: '元', r: 'ゲン', n: 'はじめ・もと・ちか', m: 'はじめ。もと。' },
+        { k: '公', r: 'コウ', n: 'きみ・あきら・まさ', m: 'おおやけ。きみ。' },
+        { k: '六', r: 'ロク', n: 'む・むつ', m: 'むっつ。' },
+        { k: '円', r: 'エン', n: 'まる・まどか・つぶら', m: 'まるい。' },
+        { k: '友', r: 'ユウ', n: 'とも・すけ', m: 'ともだち。' },
+        { k: '天', r: 'テン', n: 'あま・たか', m: 'そら。' },
+        { k: '太', r: 'タイ', n: 'ふと・た・ひろ', m: 'ふとい。おおきい。' },
+        { k: '文', r: 'ブン', n: 'ふみ・あや', m: 'ふみ。もよう。' },
+        { k: '日', r: 'ニチ', n: 'ひ・あき・はる', m: 'ひ。太陽。' },
+        { k: '月', r: 'ゲツ', n: 'つき', m: 'つき。' },
+        { k: '木', r: 'モク', n: 'き', m: 'き。' },
+        { k: '水', r: 'スイ', n: 'みず', m: 'みず。' },
+        { k: '火', r: 'カ', n: 'ひ', m: 'ひ。' },
+        { k: '仁', r: 'ジン', n: 'ひと・ひとし・めぐみ', m: 'いつくしみ。思いやり。' },
+        { k: '介', r: 'カイ', n: 'すけ・ゆき', m: '助ける。仲立ち。' }
+    ],
+    5: [
+        { k: '央', r: 'オウ', n: 'なか・ひさ・あきら', m: '真ん中。' },
+        { k: '平', r: 'ヘイ', n: 'たいら・ひら・まさ', m: 'たいらか。おだやか。' },
+        { k: '弘', r: 'コウ', n: 'ひろし・ひろ', m: 'ひろい。ひろめる。' },
+        { k: '本', r: 'ホン', n: 'もと', m: 'もと。ねっこ。' },
+        { k: '正', r: 'セイ', n: 'ただし・まさ', m: 'ただしい。' },
+        { k: '由', r: 'ユ', n: 'よし・ゆき', m: 'いわれ。よりどころ。' },
+        { k: '礼', r: 'レイ', n: 'あや・ひろ・のり', m: 'おじぎ。のり。' },
+        { k: '立', r: 'リツ', n: 'たつ・た・はる', m: 'たつ。' },
+        { k: '世', r: 'セイ', n: 'よ・つぐ', m: 'よ。一生。' },
+        { k: '代', r: 'ダイ', n: 'よ・しろ', m: 'かわる。よ。' },
+        { k: '叶', r: 'キョウ', n: 'かな・やす', m: 'かなう。' },
+        { k: '司', r: 'シ', n: 'つかさ・マモル', m: 'つかさどる。役人。' },
+        { k: '史', r: 'シ', n: 'ふみ・ちか', m: '歴史。ふみ。' },
+        { k: '加', r: 'カ', n: 'くわ・ます', m: 'くわえる。' },
+        { k: '未', r: 'ミ', n: 'み', m: 'まだ...ない。羊。' }
+    ],
+    6: [
+        { k: '光', r: 'コウ', n: 'ひかり・みつ・てる', m: 'ひかり。かがやく。' },
+        { k: '吉', r: 'キチ', n: 'よし', m: 'よい。めでたい。' },
+        { k: '圭', r: 'ケイ', n: 'よし・かど・たま', m: 'たま。角張った宝石。' },
+        { k: '多', r: 'タ', n: 'おお・かず・まさ', m: 'おおい。' },
+        { k: '好', r: 'コウ', n: 'よし・この・すき', m: 'よい。このむ。' },
+        { k: '安', r: 'アン', n: 'やす・さだ', m: 'やすい。おだやか。' },
+        { k: '早', r: 'ソウ', n: 'はや・さ', m: 'はやい。' },
+        { k: '有', r: 'ユウ', n: 'あり・とも・なお', m: 'ある。もっている。' },
+        { k: '朱', r: 'シュ', n: 'あけ・あか', m: 'あか。' },
+        { k: '百', r: 'ヒャク', n: 'もも・かず', m: 'もも。数が多い。' },
+        { k: '衣', r: 'イ', n: 'きぬ・ころも', m: 'きぬ。ころも。' },
+        { k: '羽', r: 'ウ', n: 'はね・は・つばさ', m: 'はね。' },
+        { k: '成', r: 'セイ', n: 'なり・なる・しげ', m: 'なる。成就する。' },
+        { k: '旭', r: 'キョク', n: 'あさひ・あきら', m: 'あさひ。' },
+        { k: '匡', r: 'キョウ', n: 'まさ・ただ', m: 'ただす。すくう。' },
+        { k: '帆', r: 'ハン', n: 'ほ', m: 'ふねのほ。' }
+    ],
+    7: [
+        { k: '杏', r: 'アン', n: 'あん・きょう', m: 'あんず。' },
+        { k: '快', r: 'カイ', n: 'よし・はや', m: 'こころよい。' },
+        { k: '李', r: 'リ', n: 'すもも', m: 'すもも。' },
+        { k: '良', r: 'リョウ', n: 'よし・なが・まこと', m: 'よい。' },
+        { k: '希', r: 'キ', n: 'のぞみ・まれ', m: 'のぞむ。まれ。' },
+        { k: '佑', r: 'ユウ', n: 'たすく・すけ', m: 'たすける。' },
+        { k: '作', r: 'サク', n: 'さく・とも', m: 'つくる。' },
+        { k: '利', r: 'リ', n: 'とし・かず・み', m: 'するどい。役立つ。' },
+        { k: '寿', r: 'ジュ', n: 'ことぶき・とし・ひさ', m: 'ことぶき。ながいき。' },
+        { k: '孝', r: 'コウ', n: 'たか・あつ', m: '親孝行。' },
+        { k: '克', r: 'コク', n: 'かつ・よし', m: 'かつ。耐える。' },
+        { k: '冴', r: 'コ', n: 'さえ', m: 'さえる。こおる。' },
+        { k: '吾', r: 'ゴ', n: 'われ・あ・ご', m: 'われ。自分。' },
+        { k: '志', r: 'シ', n: 'こころざし・ゆき', m: 'こころざし。' },
+        { k: '村', r: 'ソン', n: 'むら', m: 'むら。' },
+        { k: '沙', r: 'サ', n: 'さ・すな', m: 'すな。' },
+        { k: '男', r: 'ダン', n: 'おとこ', m: 'おとこ。' },
+        { k: '秀', r: 'シュウ', n: 'ひで・ほ', m: 'ひいでる。優れる。' },
+        { k: '花', r: 'カ', n: 'はな', m: 'はな。' },
+        { k: '芳', r: 'ホウ', n: 'か・よし・ふさ', m: 'かんばしい。' },
+        { k: '里', r: 'リ', n: 'さと', m: 'さと。' }
+    ],
+    8: [
+        { k: '依', r: 'イ', n: 'より・よ', m: 'よる。たよる。' },
+        { k: '佳', r: 'カ', n: 'か・よし', m: 'よい。美しい。' },
+        { k: '奈', r: 'ナ', n: 'な', m: 'からなし。いかん。' },
+        { k: '宗', r: 'シュウ', n: 'むね・かず', m: 'みたまや。中心。' },
+        { k: '実', r: 'ジツ', n: 'み・みのる・まこと', m: 'み。内容。' },
+        { k: '幸', r: 'コウ', n: 'さち・ゆき・よし', m: 'しあわせ。' },
+        { k: '弦', r: 'ゲン', n: 'つる', m: '弓のつる。' },
+        { k: '朋', r: 'ホウ', n: 'とも', m: 'ともだち。' },
+        { k: '枝', r: 'シ', n: 'えだ', m: 'えだ。' },
+        { k: '明', r: 'メイ', n: 'あかり・あきら・あけ', m: 'あかるい。' },
+        { k: '享', r: 'キョウ', n: 'すすむ・たか・あきら', m: 'うける。もてなす。' },
+        { k: '京', r: 'キョウ', n: 'きょう・みやこ', m: 'みやこ。' },
+        { k: '林', r: 'リン', n: 'はやし・しげ', m: 'はやし。' },
+        { k: '知', r: 'チ', n: 'とも・さと', m: 'しる。ち恵。' },
+        { k: '和', r: 'ワ', n: 'かず・なごみ・やわ', m: 'やわらぐ。あえる。' },
+        { k: '英', r: 'エイ', n: 'ひで・はな', m: 'はなぶさ。すぐれる。' },
+        { k: '虎', r: 'コ', n: 'とら・たけ', m: 'とら。' },
+        { k: '武', r: 'ブ', n: 'たけ・たけし', m: 'つよい。勇ましい。' },
+        { k: '昌', r: 'ショウ', n: 'まさ・あき', m: 'さかん。よい。' },
+        { k: '昂', r: 'コウ', n: 'たか・あき', m: 'あがる。たかい。' },
+        { k: '昊', r: 'コウ', n: 'そら', m: 'おおぞら。' }
+    ],
+    9: [
+        { k: '亮', r: 'リョウ', n: 'あき・あきら・たすく', m: 'あきらか。明るい。' },
+        { k: '南', r: 'ナン', n: 'みなみ', m: 'みなみ。' },
+        { k: '奏', r: 'ソウ', n: 'かなで・すすむ', m: 'かなでる。' },
+        { k: '春', r: 'シュン', n: 'はる・かす', m: 'はる。' },
+        { k: '星', r: 'セイ', n: 'ほし', m: 'ほし。' },
+        { k: '美', r: 'ビ', n: 'み・よし・はる', m: 'うつくしい。' },
+        { k: '香', r: 'コウ', n: 'か・かおり', m: 'かおり。' },
+        { k: '風', r: 'フウ', n: 'かぜ', m: 'かぜ。' },
+        { k: '音', r: 'オン', n: 'おと・ね', m: 'おと。' },
+        { k: '紀', r: 'キ', n: 'のり・とし', m: 'のり。しるす。' },
+        { k: '咲', r: 'ショウ', n: 'さき・さく', m: 'さく。わらう。' },
+        { k: '信', r: 'シン', n: 'のぶ・まこと', m: 'まこと。信じる。' },
+        { k: '保', r: 'ホ', n: 'たもつ・やす', m: 'たもつ。' },
+        { k: '俊', r: 'シュン', n: 'とし・すぐる', m: 'すぐれる。' },
+        { k: '勇', r: 'ユウ', n: 'いさむ・たけ', m: 'いさましい。' },
+        { k: '玲', r: 'レイ', n: 'れい・たま', m: '玉の鳴る音。' },
+        { k: '柚', r: 'ユ', n: 'ゆず', m: 'ゆず。' },
+        { k: '律', r: 'リツ', n: 'りつ・のり', m: 'おきて。のり。' },
+        { k: '柊', r: 'シュウ', n: 'ひいらぎ', m: 'ひいらぎ。' },
+        { k: '秋', r: 'シュウ', n: 'あき', m: 'あき。' }
+    ],
+    10: [
+        { k: '倫', r: 'リン', n: 'とも・のり・みち', m: 'ひとや。みち。' },
+        { k: '修', r: 'シュウ', n: 'おさむ・のぶ', m: 'おさめる。' },
+        { k: '健', r: 'ケン', n: 'たけ・たけし', m: 'すこやか。' },
+        { k: '剛', r: 'ゴウ', n: 'つよし・たけ', m: 'つよい。かたい。' },
+        { k: '夏', r: 'カ', n: 'なつ', m: 'なつ。' },
+        { k: '宮', r: 'キュウ', n: 'みや', m: 'みや。御殿。' },
+        { k: '将', r: 'ショウ', n: 'まさ・のぶ', m: 'ひきいる。大将。' },
+        { k: '峻', r: 'シュン', n: 'たか・たかし', m: 'けわしい。たかい。' },
+        { k: '桃', r: 'トウ', n: 'もも', m: 'もも。' },
+        { k: '桜', r: 'オウ', n: 'さくら', m: 'さくら。' },
+        { k: '泰', r: 'タイ', n: 'やす・ひろ', m: 'やすい。おちつき。' },
+        { k: '涼', r: 'リョウ', n: 'すず・すずし', m: 'すずしい。' },
+        { k: '純', r: 'ジュン', n: 'あつ・すみ', m: 'きいと。まじりけがない。' },
+        { k: '紗', r: 'サ', n: 'さ・すず', m: 'うすぎぬ。' },
+        { k: '莉', r: 'リ', n: 'り', m: 'ジャスミンの一種。' },
+        { k: '華', r: 'カ', n: 'はな・はる', m: 'はな。さかえる。' },
+        { k: '真', r: 'シン', n: 'ま・まこと', m: 'まこと。本当。' },
+        { k: '凌', r: 'リョウ', n: 'しのぐ', m: 'しのぐ。こえる。' },
+        { k: '隼', r: 'シュン', n: 'はやぶさ', m: 'はやぶさ。' },
+        { k: '高', r: 'コウ', n: 'たか・たかし', m: 'たかい。' }
+    ],
+    11: [
+        { k: '唯', r: 'ユイ', n: 'ゆい・ただ', m: 'ただ。' },
+        { k: '彩', r: 'サイ', n: 'あや・いろ・さ', m: 'いろどる。' },
+        { k: '悠', r: 'ユウ', n: 'ゆう・はるか・ひさ', m: 'とおい。ゆったり。' },
+        { k: '啓', r: 'ケイ', n: 'ひろ・あきら', m: 'ひらく。教え導く。' },
+        { k: '健', r: 'ケン', n: 'けん・たけし', m: 'すこやか。' },
+        { k: '康', r: 'コウ', n: 'やす・しず', m: 'やすい。安らか。' },
+        { k: '基', r: 'キ', n: 'もと', m: 'もとい。土台。' },
+        { k: '麻', r: 'マ', n: 'あさ', m: 'あさ。' },
+        { k: '理', r: 'リ', n: 'おさむ・こと・まさ', m: 'おさめる。ことわり。' },
+        { k: '菜', r: 'サイ', n: 'な', m: 'な。野菜。' },
+        { k: '萌', r: 'ホウ', n: 'もえ', m: 'めばえ。もえる。' },
+        { k: '淳', r: 'ジュン', n: 'あつ・すなお', m: 'あつい。情が深い。' },
+        { k: '望', r: 'ボウ', n: 'のぞみ・もち', m: 'のぞむ。満月。' },
+        { k: '清', r: 'セイ', n: 'きよ・きよし', m: 'きよい。' },
+        { k: '涼', r: 'リョウ', n: 'りょう・すず', m: 'すずしい。' },
+        { k: '琉', r: 'リュウ', n: 'りゅう', m: '宝石の一種（瑠璃）。' },
+        { k: '章', r: 'ショウ', n: 'あき・あきら', m: 'あきらか。文章。' }
+    ],
+    12: [
+        { k: '偉', r: 'イ', n: 'ひで・えら', m: 'えらい。すぐれる。' },
+        { k: '喜', r: 'キ', n: 'よし・はる', m: 'よろこぶ。' },
+        { k: '智', r: 'チ', n: 'とも・さとし', m: 'ち恵。さとい。' },
+        { k: '翔', r: 'ショウ', n: 'かける・と', m: 'かける。とぶ。' },
+        { k: '結', r: 'ケツ', n: 'ゆい・むすぶ', m: 'むすぶ。' },
+        { k: '陽', r: 'ヨウ', n: 'はる・ひ', m: 'ひ。太陽。' },
+        { k: '葵', r: 'キ', n: 'あおい', m: 'あおい。向日葵。' },
+        { k: '遥', r: 'ヨウ', n: 'はるか', m: 'はるか。とおい。' },
+        { k: '雄', r: 'ユウ', n: 'お・かつ・たけ', m: 'おす。勇ましい。' },
+        { k: '尊', r: 'ソン', n: 'たける・たか', m: 'とうとい。' },
+        { k: '貴', r: 'キ', n: 'たか・たかし', m: 'たっとい。' },
+        { k: '朝', r: 'チョウ', n: 'あさ・とも', m: 'あさ。' },
+        { k: '葉', r: 'ヨウ', n: 'は', m: 'は。' },
+        { k: '瑛', r: 'エイ', n: 'あきら', m: '水晶の光。' },
+        { k: '凱', r: 'ガイ', n: 'よし・とき', m: 'かちどき。' }
+    ],
+    13: [
+        { k: '園', r: 'エン', n: 'その', m: 'その。にわ。' },
+        { k: '愛', r: 'アイ', n: 'あい・めぐ・まな', m: 'いとしむ。いつくしむ。' },
+        { k: '想', r: 'ソウ', n: 'おも', m: 'おもう。' },
+        { k: '蓮', r: 'レン', n: 'はす', m: 'はす。' },
+        { k: '新', r: 'シン', n: 'あらた・あら・しん', m: 'あたらしい。' },
+        { k: '楓', r: 'フウ', n: 'かえで', m: 'かえで。' },
+        { k: '誠', r: 'セイ', n: 'まこと', m: 'まこと。' },
+        { k: '詩', r: 'シ', n: 'うた', m: 'うた。' },
+        { k: '聖', r: 'セイ', n: 'ひじり・きよ', m: 'ひじり。清らか。' },
+        { k: '寛', r: 'カン', n: 'ひろし', m: 'くつろぐ。ひろい。' },
+        { k: '暖', r: 'ダン', n: 'はる・のん', m: 'あたたかい。' },
+        { k: '嵩', r: 'スウ', n: 'たか', m: 'かさ。高い。' }
+    ],
+    14: [
+        { k: '碧', r: 'ヘキ', n: 'あお・みどり', m: 'あおい。深く青い石。' },
+        { k: '綾', r: 'リョウ', n: 'あや', m: 'あや。模様のある絹。' },
+        { k: '颯', r: 'サツ', n: 'はやて・そう', m: '風の吹くさま。' },
+        { k: '瑠', r: 'ル', n: 'る', m: '宝石（瑠璃）。' },
+        { k: '寧', r: 'ネイ', n: 'ねい・しず', m: 'ねんごろ。安らか。' },
+        { k: '聡', r: 'ソウ', n: 'さとし', m: 'さとい。賢い。' },
+        { k: '歌', r: 'カ', n: 'うた', m: 'うた。' },
+        { k: '輔', r: 'ホ', n: 'たすく・すけ', m: 'たすける。' },
+        { k: '緑', r: 'リョク', n: 'みどり', m: 'みどり。' }
+    ],
+    15: [
+        { k: '輝', r: 'キ', n: 'かがや・てる', m: 'かがやく。' },
+        { k: '穂', r: 'スイ', n: 'ほ', m: 'いなほ。' },
+        { k: '慶', r: 'ケイ', n: 'よし・のり', m: 'よろこぶ。めでたい。' },
+        { k: '潤', r: 'ジュン', n: 'うる・ひろ・ます', m: 'うるおう。' },
+        { k: '諒', r: 'リョウ', n: 'りょう・まこと', m: 'あきらか。まこと。' },
+        { k: '凜', r: 'リン', n: 'りん', m: '寒さがきびしい。凛々しい。' },
+        { k: '舞', r: 'ブ', n: 'まい', m: 'まう。' },
+        { k: '縁', r: 'エン', n: 'ゆかり・より', m: 'ふち。ゆかり。' }
+    ],
+    16: [
+        { k: '樹', r: 'ジュ', n: 'いつき・たつのき', m: 'き。立ち木。' },
+        { k: '澪', r: 'レイ', n: 'みお', m: 'みお。船の通り道。' },
+        { k: '龍', r: 'リュウ', n: 'りゅう・たつ', m: 'りゅう。' },
+        { k: '優', r: 'ユウ', n: 'すぐる・まさる・ゆう', m: 'やさしい。すぐれる。' },
+        { k: '賢', r: 'ケン', n: 'かしこ・まさ', m: 'かしこい。' },
+        { k: '篤', r: 'トク', n: 'あつ・あつし', m: 'あつい。情が深い。' },
+        { k: '錦', r: 'キン', n: 'にしき', m: 'にしき。' }
+    ],
+    17: [
+        { k: '優', r: 'ユウ', n: 'ゆう・やさ', m: 'やさしい。' },
+        { k: '瞳', r: 'ドウ', n: 'ひとみ', m: 'ひとみ。' },
+        { k: '翼', r: 'ヨク', n: 'つばさ', m: 'つばさ。たすける。' },
+        { k: '陽', r: 'ヨウ', n: 'はる・ひ', m: 'ひ。みなみ。' },
+        { k: '駿', r: 'シュン', n: 'はや・とし', m: 'すぐれる。俊馬。' },
+        { k: '燦', r: 'サン', n: 'さん', m: 'きらめく。あざやか。' },
+        { k: '謙', r: 'ケン', n: 'ゆずる・かね', m: 'へりくだる。' }
+    ],
+    18: [
+        { k: '織', r: 'シキ', n: 'おり', m: 'おる。織物。' },
+        { k: '藤', r: 'トウ', n: 'ふじ', m: 'ふじ。' },
+        { k: '癒', r: 'ユ', n: 'いや', m: 'いやす。' },
+        { k: '臨', r: 'リン', n: 'のぞむ', m: 'のぞむ。' },
+        { k: '雛', r: 'スウ', n: 'ひな', m: 'ひな。ひよこ。' },
+        { k: '瞬', r: 'シュン', n: 'またたき', m: 'またたく。' }
+    ],
+    19: [
+        { k: '麗', r: 'レイ', n: 'うるわ', m: 'うるわしい。' },
+        { k: '識', r: 'シキ', n: 'さと', m: 'しる。見識。' },
+        { k: '響', r: 'キョウ', n: 'ひびき', m: 'ひびく。' },
+        { k: '願', r: 'ガン', n: 'ねがい', m: 'ねがう。' },
+        { k: '羅', r: 'ラ', n: 'ら', m: 'あみ。つらなる。' }
+    ],
+    20: [
+        { k: '蘭', r: 'ラン', n: 'らん', m: 'ふじばかま。らん。' },
+        { k: '馨', r: 'ケイ', n: 'かおる', m: 'かんばしい。' },
+        { k: '譲', r: 'ジョウ', n: 'ゆずる', m: 'ゆずる。' },
+        { k: '耀', r: 'ヨウ', n: 'かがや', m: 'かがやく。' }
+    ],
+    21: [
+        { k: '櫻', r: 'オウ', n: 'さくら', m: 'さくら（旧字体）。' },
+        { k: '躍', r: 'ヤク', n: 'おど', m: 'おどる。' },
+        { k: '誉', r: 'ヨ', n: 'ほまれ', m: 'ほまれ。' }
+    ],
+    23: [
+        { k: '恋', r: 'レン', n: 'こい', m: 'こい。' },
+        { k: '麟', r: 'リン', n: 'りん', m: '麒麟。' }
+    ],
+    24: [
+        { k: '鷹', r: 'ヨウ', n: 'たか', m: 'たか。' },
+        { k: '琴', r: 'キン', n: 'こと', m: 'こと。' }
+    ]
+};
 
-/* Removed loadKanjiData function as we use hardcoded KANJI_DATA */
+// --- Client-Side Name Database Logic ---
+const NAME_DB_URLS = {
+    KANJI: 'https://raw.githubusercontent.com/davidluzgouveia/kanji-data/master/kanji.json',
+    MN_OPT: 'https://raw.githubusercontent.com/shuheilocale/japanese-personal-name-dataset/main/japanese_personal_name_dataset/dataset/first_name_man_opti.csv',
+    FN_OPT: 'https://raw.githubusercontent.com/shuheilocale/japanese-personal-name-dataset/main/japanese_personal_name_dataset/dataset/first_name_woman_opti.csv'
+};
+
+let globalNameDB = null;
+let isFetchingDB = false;
+let currentFilterContext = {
+    totalStrokes: 0,
+    targetStrokes: [],
+    gender: 'all'
+};
+
+// Filter Event Listeners
+document.querySelectorAll('input[name="gender-filter"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        currentFilterContext.gender = e.target.value;
+        renderNameList();
+    });
+});
+
+async function ensureNameDB() {
+    if (globalNameDB) return true;
+    if (isFetchingDB) return new Promise(resolve => {
+        const check = setInterval(() => {
+            if (globalNameDB) { clearInterval(check); resolve(true); }
+        }, 100);
+    });
+
+    isFetchingDB = true;
+    const loadingElem = document.getElementById('name-list-loading');
+    if (loadingElem) loadingElem.classList.remove('hidden');
+
+    try {
+        const [kanjiRes, mnRes, fnRes] = await Promise.all([
+            fetch(NAME_DB_URLS.KANJI).then(r => r.json()),
+            fetch(NAME_DB_URLS.MN_OPT).then(r => r.text()),
+            fetch(NAME_DB_URLS.FN_OPT).then(r => r.text())
+        ]);
+
+        const kanjiStrokes = {};
+        Object.keys(kanjiRes).forEach(char => {
+            if (kanjiRes[char].strokes) kanjiStrokes[char] = kanjiRes[char].strokes;
+        });
+
+        const db = {};
+
+        const processCSV = (csv, gender) => {
+            const lines = csv.split('\n');
+            // Dataset format: reading,romaji,kanji1,kanji2...
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                const parts = line.split(',');
+                if (parts.length < 3) continue;
+
+                const yomi = parts[0];
+                // parts[1] is romaji
+                const kanjiCandidates = parts.slice(2);
+
+                kanjiCandidates.forEach(name => {
+                    if (!name) return;
+
+                    let total = 0;
+                    let valid = true;
+                    const strokes = [];
+
+                    for (const char of name) {
+                        if (kanjiStrokes[char]) {
+                            total += kanjiStrokes[char];
+                            strokes.push(kanjiStrokes[char]);
+                        } else {
+                            // Try to look up in local KANJI_DATA if external fails
+                            let foundLocal = false;
+                            for (const s in KANJI_DATA) {
+                                if (KANJI_DATA[s].find(k => k.k === char)) {
+                                    total += parseInt(s);
+                                    strokes.push(parseInt(s));
+                                    foundLocal = true;
+                                    break;
+                                }
+                            }
+                            if (!foundLocal) {
+                                valid = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (valid) {
+                        if (!db[total]) db[total] = [];
+                        // Avoid duplicates
+                        if (!db[total].find(n => n.n === name && n.r === yomi)) {
+                            db[total].push({ n: name, r: yomi, g: gender, s: strokes });
+                        }
+                    }
+                });
+            }
+        };
+
+        processCSV(mnRes, 'm');
+        processCSV(fnRes, 'f');
+
+        globalNameDB = db;
+        return true;
+    } catch (e) {
+        console.error("Failed to build name DB", e);
+        alert('名前データの読み込みに失敗しました。');
+        return false;
+    } finally {
+        isFetchingDB = false;
+        if (loadingElem) loadingElem.classList.add('hidden');
+    }
+}
 
 // Event Listeners
 analyzeBtn.addEventListener('click', handleAnalyze);
@@ -70,7 +456,15 @@ recalcBtn.addEventListener('click', () => calculateAndDisplay(currentSurnameStro
 if (closeModal) closeModal.addEventListener('click', () => kanjiModal.classList.add('hidden'));
 window.addEventListener('click', (e) => {
     if (e.target === kanjiModal) kanjiModal.classList.add('hidden');
+    if (e.target === nameListModal) nameListModal.classList.add('hidden');
 });
+
+const closeNameListBtn = document.querySelector('.close-name-list');
+if (closeNameListBtn) {
+    closeNameListBtn.addEventListener('click', () => {
+        nameListModal.classList.add('hidden');
+    });
+}
 
 async function handleAnalyze() {
     const surname = surnameInput.value.trim();
@@ -171,8 +565,12 @@ function calculateAndDisplay(surnameStrokes) {
         row.style.animationDelay = `${Math.min(index * 0.02, 1)}s`;
         row.dataset.nameStrokes = JSON.stringify(item.nameStrokes);
 
-        // Add click listener for modal
-        row.addEventListener('click', () => openKanjiModal(item.nameStrokes, item.weightedScore));
+        // Make the main row click open the Name List (New default behavior)
+        const nameStrokes = item.nameStrokes;
+
+        row.addEventListener('click', (e) => {
+            openNameList(nameStrokes);
+        });
 
         // Format name like "3+15"
         let patternText = item.nameStrokes.join('+') + '画';
@@ -181,7 +579,7 @@ function calculateAndDisplay(surnameStrokes) {
             <div class="col-name">
                 <span class="name-pattern">${patternText}</span>
                 <span class="score-pill" style="background:${getScoreColor(item.weightedScore)}">${item.weightedScore}pt</span>
-                <span class="tap-hint">タップで漢字候補</span>
+                <span class="tap-hint">タップで名前実例</span>
             </div>
             ${renderCell(item.metrics.soukaku, true)}
             ${renderCell(item.metrics.chikaku)}
@@ -198,6 +596,80 @@ function calculateAndDisplay(surnameStrokes) {
     }
 }
 
+async function openNameList(nameStrokes) {
+    nameListModal.classList.remove('hidden');
+    nameListContainer.innerHTML = '';
+
+    // Calculate total for DB key lookup
+    const total = nameStrokes.reduce((a, b) => a + b, 0);
+    const patternStr = nameStrokes.join('+');
+
+    nameListDesc.textContent = `画数構成「${patternStr}画」（地格${total}画）になる名前の候補`;
+
+    currentFilterContext.totalStrokes = total;
+    currentFilterContext.targetStrokes = nameStrokes;
+
+    // Sync state with UI just in case
+    const checked = document.querySelector('input[name="gender-filter"]:checked');
+    if (checked) currentFilterContext.gender = checked.value;
+
+    await ensureNameDB();
+
+    renderNameList();
+}
+
+function renderNameList() {
+    const { totalStrokes, targetStrokes, gender } = currentFilterContext;
+
+    if (!globalNameDB || !globalNameDB[totalStrokes]) {
+        nameListContainer.innerHTML = '<p style="text-align:center; padding:20px;">該当する名前候補が見つかりませんでした。</p>';
+        return;
+    }
+
+    let names = globalNameDB[totalStrokes];
+
+    // Filter by Gender
+    if (gender !== 'all') {
+        names = names.filter(n => n.g === gender);
+    }
+
+    // Filter by Exact Stroke Pattern
+    // targetStrokes is e.g. [4, 8]
+    if (targetStrokes && targetStrokes.length > 0) {
+        names = names.filter(n => {
+            if (n.s.length !== targetStrokes.length) return false;
+            return n.s.every((val, i) => val === targetStrokes[i]);
+        });
+    }
+
+    if (names.length === 0) {
+        nameListContainer.innerHTML = '<p style="text-align:center; padding:20px;">この画数構成（' + targetStrokes.join('+') + '画）の登録データがありませんでした。<br>条件を変えてお試しください。</p>';
+        return;
+    }
+
+    let html = '<div class="name-grid">';
+    names.forEach(n => {
+        // Calculate total kanji strokes for display (should match totalStrokes, but good to verify)
+        // actually n.s is an array of strokes.
+        const actualTotal = n.s.reduce((a, b) => a + b, 0);
+
+        html += `
+            <div class="name-card">
+                <div class="nc-main">
+                    <span class="nc-kanji">${n.n}</span>
+                    <span class="nc-read">（${n.r}）</span>
+                </div>
+                <div class="nc-meta">
+                    <span class="nc-strokes">${actualTotal}画</span>
+                    <span class="nc-gender gender-${n.g}">${n.g === 'm' ? '男' : '女'}</span>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    nameListContainer.innerHTML = html;
+}
+
 function openKanjiModal(strokes, score) {
     kanjiModal.classList.remove('hidden');
 
@@ -211,8 +683,12 @@ function openKanjiModal(strokes, score) {
         if (candidates.length > 0) {
             kanjiTags = candidates.map(c => `
                 <div class="kanji-item">
-                    <span class="k-char">${c.k}</span>
-                    <span class="k-read">${c.r}</span>
+                    <div class="k-char">${c.k}</div>
+                    <div class="k-info">
+                        <span class="k-read">読: ${c.r}</span>
+                        ${c.n ? `<span class="k-nano">名: ${c.n}</span>` : ''}
+                        ${c.m ? `<p class="k-mean">${c.m}</p>` : ''}
+                    </div>
                 </div>
             `).join('');
         } else {
